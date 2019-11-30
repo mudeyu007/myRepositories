@@ -18,28 +18,32 @@ public class Configuration {
 	 */
 	private String user;
 	/**
-	 * 密码
+	 * 	密码
 	 */
 	private String pwd;
 	/**
-	 * 使用中的数据库
+	 * 	使用中的数据库
 	 */
 	private String usingDB;
 	/**
-	 * 源码路径
+	 * 	源码路径
 	 */
 	private String srcPath;
 	/**
-	 * 扫描生成的java类的包（persistence object:持久化对象）
+	 * 	扫描生成的java类的包（persistence object:持久化对象）
 	 */
 	private String poPackage;
+	/**
+	 * 	使用的Query的路径
+	 */
+	private String QueryClass;
 	
 	public Configuration() {
 		
 	}
 	
 	public Configuration(String driver, String url, String user,String pwd, 
-			String usingDB, String srcPath,String poPackage) {
+			String usingDB, String srcPath,String poPackage,String QueryClass) {
 		this.driver = driver;
 		this.url = url;
 		this.user = user;
@@ -47,6 +51,17 @@ public class Configuration {
 		this.usingDB = usingDB;
 		this.srcPath = srcPath;
 		this.poPackage = poPackage;
+		this.QueryClass = QueryClass;
+	}
+	
+	
+
+	public String getQueryClass() {
+		return QueryClass;
+	}
+
+	public void setQueryClass(String queryClass) {
+		QueryClass = queryClass;
 	}
 
 	public String getDriver() {

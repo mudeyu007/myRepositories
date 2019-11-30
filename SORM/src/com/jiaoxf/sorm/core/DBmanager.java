@@ -31,7 +31,8 @@ public class DBmanager {
 		conf.setUser(pros.getProperty("user"));
 		conf.setPwd(pros.getProperty("pwd"));
 		conf.setUsingDB(pros.getProperty("usingDB"));
-		conf.setSrcPath(pros.getProperty("srcPath"));		
+		conf.setSrcPath(pros.getProperty("srcPath"));
+		conf.setQueryClass(pros.getProperty("QueryClass"));
 	}
 	
 	//建立数据库连接，static 只建立一次
