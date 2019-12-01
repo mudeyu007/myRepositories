@@ -249,6 +249,15 @@ public abstract class Query implements Cloneable{
 		
 		return (list!=null&&list.size()>0)?null:list.get(0);
 	}
+	
+	public Object queryById(Class clazz,Object id) {
+		TableInfo tableInfo = TableContext.poClassTableMap.get(clazz);
+		//获取主键
+		ColumnInfo priKey = tableInfo.getOnlyPriKey();
+		String sql = "selcet * from "+tableInfo.getTableName()+" where "+priKey+"=?";
+		
+		return queryUniqueRow(sql, clazz, new Object[]{id});
+	}
 	/**
 	 * 	查询一行一列数据。
 	 * @param sql:查询语句

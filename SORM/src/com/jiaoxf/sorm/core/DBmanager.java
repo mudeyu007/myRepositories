@@ -13,11 +13,13 @@ import java.sql.Statement;
 import java.util.Properties;
 
 import com.jiaoxf.sorm.bean.Configuration;
+import com.jiaoxf.sorm.pool.DBConnPool;
 
 public class DBmanager {
 	private static Configuration conf;
+	private static DBConnPool pool;
 	
-	static {//静态代码块，只在类加载时执行一次
+	static {	//静态块：加载配置文件“db.properties”的文本参数到配置对象conf
 		Properties pros = new Properties();
 		
 		try {
@@ -33,10 +35,15 @@ public class DBmanager {
 		conf.setUsingDB(pros.getProperty("usingDB"));
 		conf.setSrcPath(pros.getProperty("srcPath"));
 		conf.setQueryClass(pros.getProperty("QueryClass"));
+		conf.setPoolMaxSize(Integer.parseInt(pros.getProperty("poolMaxSize")));
+		conf.setPoolMinSize(Integer.parseInt(pros.getProperty("poolMinSize")));
 	}
 	
-	//建立数据库连接，static 只建立一次
-	public static Connection getConn() {
+	/**
+	 * 	创建数据库连接：DBConnPool使用，连接池创建连接对象
+	 * @return
+	 */
+	public static Connection creatConn() {
 		try {
 			Class.forName(conf.getDriver());
 			return DriverManager.getConnection(conf.getUrl(),
@@ -50,7 +57,31 @@ public class DBmanager {
 		}		
 	}
 	
-	//关闭资源,
+	/**
+	 * 	获取连接对象
+	 * @return
+	 */
+	public static Connection getConn() {
+		if(pool==null) {
+			pool = new DBConnPool();
+		}
+		return pool.getConn();
+	}
+	
+	/**
+	 * 	获取配置信息
+	 * @return
+	 */
+	public static Configuration getConfig() {
+		return conf;
+	}
+	
+	/**
+	 * 	关闭资源
+	 * @param rs ：查询结果集
+	 * @param stmt：sql封装对象
+	 * @param conn：连接对象
+	 */
 	public static void close(ResultSet rs,Statement stmt,Connection conn) {
 			try {
 				if(rs!=null) {
@@ -66,20 +97,14 @@ public class DBmanager {
 			} catch (SQLException e) {
 				e.printStackTrace();
 			}
-			try {
-				if(conn!=null) {
-					conn.close();
-				}
-			} catch (SQLException e) {
-				e.printStackTrace();
-			}		
-	}
-	/**
-	 * 	获取配置信息
-	 * @return
-	 */
-	public static Configuration getConfig() {
-		return conf;
+//			try {
+//				if(conn!=null) {
+//					conn.close();
+//				}
+//			} catch (SQLException e) {
+//				e.printStackTrace();
+//			}	
+			pool.CloseConn(conn);
 	}
 	
 }

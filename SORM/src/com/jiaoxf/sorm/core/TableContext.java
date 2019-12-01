@@ -6,9 +6,15 @@ package com.jiaoxf.sorm.core;
  *
  */
 
+import java.sql.Connection;
+import java.sql.DatabaseMetaData;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.jiaoxf.sorm.bean.ColumnInfo;
 import com.jiaoxf.sorm.bean.TableInfo;
 import com.jiaoxf.sorm.utils.JavaFileUtils;
 import com.jiaoxf.sorm.utils.StringUtils;
@@ -33,14 +39,41 @@ public class TableContext {
 	 * 	初始化，加载表信息
 	 */
 	static {
-		
-		/*
-		 * 
-		 * 
-		 * 
-		 * 
-		 * 
-		 */
+		try {
+				//初始化获得表的信息
+				Connection con = DBmanager.getConn();
+				DatabaseMetaData dbmd = con.getMetaData(); 
+				
+				ResultSet tableRet = dbmd.getTables(null, "%","%",new String[]{"TABLE"}); 
+				
+				while(tableRet.next()){
+					String tableName = (String) tableRet.getObject("TABLE_NAME");
+					
+					TableInfo ti = new TableInfo(tableName,new HashMap<String, ColumnInfo>() ,
+							new ArrayList<ColumnInfo>());
+					tables.put(tableName, ti);
+					
+					ResultSet set = dbmd.getColumns(null, "%", tableName, "%");  //查询表中的所有字段
+					while(set.next()){
+						ColumnInfo ci = new ColumnInfo(set.getString("COLUMN_NAME"), 
+								set.getString("TYPE_NAME"), 0);
+						ti.getColumns().put(set.getString("COLUMN_NAME"), ci);
+					}
+					
+					ResultSet set2 = dbmd.getPrimaryKeys(null, "%", tableName);  //查询t_user表中的主键
+					while(set2.next()){
+						ColumnInfo ci2 = (ColumnInfo) ti.getColumns().get(set2.getObject("COLUMN_NAME"));
+						ci2.setPriKey(1);;  //设置为主键类型
+						ti.getUnitKeys().add(ci2);
+					}
+					
+					if(ti.getUnitKeys().size()>0){  //取唯一主键。。方便使用。如果是联合主键。则为空！
+						ti.setOnlyPriKey(ti.getUnitKeys().get(0));
+					}
+				}
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		
 		
 		//更新PO包下的java类

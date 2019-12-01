@@ -5,6 +5,7 @@ package com.jiaoxf.sorm.bean;
  *
  */
 
+import java.util.List;
 import java.util.Map;
 
 public class TableInfo {
@@ -20,12 +21,15 @@ public class TableInfo {
 	 * 	唯一主键信息（目前仅能处理有且仅有一个主键的情况）
 	 */
 	private ColumnInfo onlyPriKey;
+	/**
+	 * 	联合主键信息
+	 */
+	private List<ColumnInfo> unitKeys;
 	
-	
-	public TableInfo(String tableName, Map<String, ColumnInfo> columns, ColumnInfo onlyPriKey) {
+	public TableInfo(String tableName, Map<String, ColumnInfo> columns, List<ColumnInfo> unitKeys) {
 		this.tableName = tableName;
 		this.columns = columns;
-		this.onlyPriKey = onlyPriKey;
+		this.unitKeys = unitKeys;
 	}
 	public TableInfo() {
 
@@ -48,5 +52,13 @@ public class TableInfo {
 	public void setOnlyPriKey(ColumnInfo onlyPriKey) {
 		this.onlyPriKey = onlyPriKey;
 	}
+	public List<ColumnInfo> getUnitKeys() {
+		return unitKeys;
+	}
+	public void setUnitKeys(List<ColumnInfo> unitKeys) {
+		this.unitKeys = unitKeys;
+	}
+	
+	
 		
 }
