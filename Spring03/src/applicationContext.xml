@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+    xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+    xsi:schemaLocation="http://www.springframework.org/schema/beans
+        http://www.springframework.org/schema/beans/spring-beans.xsd"> 
+     <!-- 封装数据源类。数据源：获取数据库连接，位于spring-jdbc.jar --> 
+     <bean id="dataSource" class="org.springframework.jdbc.datasource.DriverManagerDataSource">
+     	<property name="driverClassName" value="com.mysql.jdbc.Driver"></property>
+     	<property name="url" value="jdbc:mysql://localhost:3306/ssm"></property>
+     	<property name="username" value="root"></property>
+     	<property name="password" value="jiao13xf"></property>
+     </bean>
+     <!-- 封装SqlSessionFactory. mybatis-spring.jar 
+     	1.SqlSession创建时mybatis.xml已经读取并创建Configutation对象；
+     	  所以，SqlSessionFactoy需要关联扫描器。
+     -->
+     <bean id="factory" class="org.mybatis.spring.SqlSessionFactoryBean">
+     	<property name="dataSource" ref="dataSource"></property>
+     </bean>
+     <!-- 配置扫描器:等价于mybatis.xml中的mapper标签下的<package>标签
+     	负责扫描com.jiaoxf.mapper包后，会给对应接口创建对象。
+      -->
+     <bean id="scanner" class="org.mybatis.spring.mapper.MapperScannerConfigurer">
+     	<!-- 要扫描的包 -->
+     	<property name="basePackage" value="com.jiaoxf.mapper"></property>
+     	<!-- 和factory关联 -->
+     	<property name="sqlSessionFactory" ref="factory"></property>
+     </bean>
+     <!-- 由spring管理实现类 -->
+     <bean id="airportService" class="com.jiaoxf.service.impl.AirportServiceImpl">
+     	<property name="airportMapper" ref="airportMapper"></property>
+     </bean>
+</beans>
