@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper
+  PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+  "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.jiaoxf.mapper.AirLineMapper">
+	<resultMap type="airline" id="linemap">
+		<id property="id" column="id"/>
+		<result property="airno" column="airno"/>
+		<result property="time" column="time"/>
+		<result property="price" column="price"/>
+		<result property="takeoffid" column="takeoffid"/>
+		<result property="landid" column="landid"/>
+		<collection property="takeoffPort" javaType="airport">
+			<id property="id" column="tid"/>
+			<result property="name" column="takeoffname"/>
+			<result property="city" column="takeoffcity"/>
+		</collection>
+		<collection property="landPort" javaType="airport">
+			<id property="id" column="lid"/>
+			<result property="name" column="landname"/>
+			<result property="city" column="landcity"/>
+		</collection>
+	</resultMap>
+	<select id="selByTfidLdid" resultMap="linemap">
+	select a.*,tf.id tid,tf.name takeoffname,tf.city takeoffcity,ld.id lid,ld.name landname,ld.city landcity 
+	from airline a left join airport tf on a.takeoffid=tf.id 
+	left join airport ld on a.landid=ld.id
+	<where>
+		<if test="takeoff>0">
+			and takeoffid=#{takeoff}
+		</if>
+		<if test="land>0">
+			and landid=#{land}
+		</if>
+	</where>
+	</select>
+</mapper>
